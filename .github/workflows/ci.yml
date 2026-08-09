@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  crystal-pool:
+    name: CrystalPool
+    uses: 42-Cursus-treig/.github/.github/workflows/python-ci.yml@main
+    with:
+      working_directory: "."
+      python_version: "3.12"
+      cache_dependency_path: "requirements.txt"
+      install_command: "python -m pip install -r requirements.txt"
+      lint_command: ""
+      typecheck_command: ""
+      test_command: "python -c 'import dotenv, lightgbm, matplotlib, numpy, pandas, requests, shap, sklearn'"
+      build_command: "python -m pip check"
